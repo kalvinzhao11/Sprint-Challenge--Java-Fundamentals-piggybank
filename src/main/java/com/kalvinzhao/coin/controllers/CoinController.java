@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -35,9 +36,13 @@ public class CoinController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    public int compare(Coin c1, Coin c2) {
+        return Double.compare(c1.getValue(), c2.getValue());
+    }
+
 //    http://localhost:2019/money/{amount}
     @GetMapping(value = "/money/{amount}", produces = {"application/json"})
-    public ResponseEntity<?> removeCoin(@PathVariable char amount) { //letter has to match {letter} from previous line
+    public ResponseEntity<?> removeCoin(@PathVariable double amount) { //letter has to match {letter} from previous line
         List<Coin> myList = new ArrayList<>();
         coinrepo.findAll().iterator().forEachRemaining(myList::add);
         double total = 0;
@@ -45,14 +50,30 @@ public class CoinController {
             total += c.getValue() * c.getQuantity();
         }
         if (amount > total) {
-            System.out.println("Money not available");;
+            System.out.println("Money not available");
         } else {
-            while (amount != 0) {
-
+            myList.sort((item1, item2)-> (int)(item2.getValue()*100 - item1.getValue()*100));
+            for (Coin c: myList){
+                int counter = 1;
+                while (amount != 0 && c.getQuantity()!=0 && amount >= c.getValue()){
+                    counter --;
+                    amount -= c.getValue();
+                    total -= c.getValue();
+                    c.setQuantity(c.getQuantity() - 1);
+                }
+                    if (counter == 1) {
+                        if (c.getQuantity() > 1){
+                            System.out.println(c.getQuantity() + " " + c.getNameplural());
+                        } else {
+                            System.out.println(c.getQuantity() + " " + c.getName());
+                        }
+                    } else {
+                        System.out.println("$" + c.getValue()*c.getQuantity());
+                    }
             }
+            System.out.println("The piggy bank holds $" + total);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(myList, HttpStatus.OK);
     }
-
 
 }
