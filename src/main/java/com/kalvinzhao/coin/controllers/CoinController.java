@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -34,10 +33,6 @@ public class CoinController {
         }
         System.out.println("the piggy bank holds " + total);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    public int compare(Coin c1, Coin c2) {
-        return Double.compare(c1.getValue(), c2.getValue());
     }
 
 //    http://localhost:2019/money/{amount}
@@ -73,7 +68,7 @@ public class CoinController {
             }
             System.out.println("The piggy bank holds $" + total);
         }
-        return new ResponseEntity<>(myList, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
